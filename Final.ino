@@ -1,3 +1,5 @@
+#include <Servo.h>
+
 //*******************************************//
 //    Declaration of Motor Controller PINs   //
 //*******************************************//
@@ -48,7 +50,11 @@
 #define L_ARM5_PIN 		51
 #define L_ARMC_PIN 		53
 
-// Servo Object Declaration
+
+//****************************************//
+//      Servo Object Declaration     //
+//****************************************//
+
 // Right Arm
 Servo rArm_Servo1;
 Servo rArm_Servo2;
