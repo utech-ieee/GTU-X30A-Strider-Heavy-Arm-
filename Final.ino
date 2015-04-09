@@ -65,8 +65,43 @@ Servo lArm_Servo4;
 Servo lArm_Servo5;
 Servo lClaw;
 
-void setup();
+void setup()
+{
+	Serial.begin(9600); //Opens serial connection at 9600 baud rate
+	
+	//Initaizing Robotic Right Arm Angles
+	rArm_Servo1.write(150);
+	rArm_Servo2.write(170);
+	rArm_Servo3.write(180);
+	rArm_Servo4.write(180);
+	rArm_Servo5.write(180);
+	
+	//Initiaizing Robotic Left Arm Angles
+	lArm_Servo1.write(10);
+	lArm_Servo2.write(5);
+	lArm_Servo3.write(5);
+	lArm_Servo4.write(5);
+	lArm_Servo5.write(5);
+	
+	//Initiaizng Heavy Arm Claw to hold position.
+	lClaw.writeMicroseconds(1500);
+	
+	rArm_Servo1.attach(R_ARM1_PIN); // Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin	
+	rArm_Servo2.attach(R_ARM2_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	rArm_Servo3.attach(R_ARM3_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	rArm_Servo4.attach(R_ARM4_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	//rArm_Servo5.attach(R_ARM5_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	//rClaw.attach(R_ARMC_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	
+	lArm_Servo1.attach(L_ARM1_PIN); // Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	lArm_Servo2.attach(L_ARM2_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	lArm_Servo3.attach(L_ARM3_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	lArm_Servo4.attach(L_ARM4_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	//lArm_Servo5.attach(L_ARM5_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+	lClaw.attach(L_ARMC_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
+}
+
+void loop()
 {
 	
 }
-
