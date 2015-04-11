@@ -82,6 +82,7 @@ int State;
 
 int IRL_in;					// declaration of the buffer to store the output of all  s0- s7 pins of the KRF
 int game_count = 0;
+int t_count = 0;
 
 int xFR = 147;
 int xFL = 157;
@@ -123,7 +124,8 @@ void setup()
 	//lArm_Servo5.attach(L_ARM5_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
 	lClaw.attach(L_ARMC_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
 	
-	/*
+	delay(3000);
+
 	//LDR_value = analogRead(LDR_PIN); //reading sensor digital values
 	initial_condition = map(analogRead(LDR_PIN), 0, 1023, 0, 40);// map LDR reading to smaller values and store as initial_condition
 	//state = initial_condition; //place initial condition in variable state for use later on
@@ -138,12 +140,12 @@ void setup()
 		State = map(analogRead(LDR_PIN), 0, 1023, 0, 40);
 		Serial.println(State);
 	}while((initial_condition - 2) >= State);
-	*/
+
 	Serial.println("Ramp");
 	
 	Set_Motors_Forward();
 
-	for(int i = 0; i < 40; i += 2)
+	for(int i = 0; i < 20; i += 2)
 	{
 		analogWrite(MFR_PWM_PIN, xFR + i);
 		analogWrite(MFL_PWM_PIN, xFL + i);
@@ -152,7 +154,7 @@ void setup()
 		analogWrite(MBL_PWM_PIN, xBR + i);
 	}
 	
-	delay(1000);
+	delay(500);
 }
 
 void loop()
@@ -175,14 +177,24 @@ void loop()
 			Set_Motors_Forward();
 			
 			analogWrite(MFR_PWM_PIN, xFR + 60);
-			analogWrite(MFL_PWM_PIN, xFL - 30);
+			analogWrite(MFL_PWM_PIN, xFL - 40);
 		
 			analogWrite(MBR_PWM_PIN, xBR + 60);
-			analogWrite(MBL_PWM_PIN, xBL - 30);
+			analogWrite(MBL_PWM_PIN, xBL - 40);
 			break;
 		case 0b00001111:
 			Serial.println("0L000");
 			
+			Set_Motors_Forward();
+			
+			analogWrite(MFR_PWM_PIN, xFR + 60);
+			analogWrite(MFL_PWM_PIN, xFL - 60);
+		
+			analogWrite(MBR_PWM_PIN, xBR + 60);
+			analogWrite(MBL_PWM_PIN, xBL - 60);
+			break;
+			
+		case 0b11000111:
 			Set_Motors_Forward();
 			
 			analogWrite(MFR_PWM_PIN, xFR + 60);
@@ -191,25 +203,37 @@ void loop()
 			analogWrite(MBR_PWM_PIN, xBR + 60);
 			analogWrite(MBL_PWM_PIN, xBL - 30);
 			break;
-			
-		case 0b11000111:
-		case 0b10000111:
 		case 0b10000011:
 			Serial.println("0LL00");
 			
 			Set_Motors_Forward();
 			
 			analogWrite(MFR_PWM_PIN, xFR + 40);
-			analogWrite(MFL_PWM_PIN, xFL - 30);
+			analogWrite(MFL_PWM_PIN, xFL - 10);
 			
 			analogWrite(MBR_PWM_PIN, xBR + 40);
-			analogWrite(MBL_PWM_PIN, xBL - 30);
+			analogWrite(MBL_PWM_PIN, xBL - 10);
 			break;
 			
 		case 0b11100001:
+			analogWrite(MFR_PWM_PIN, xFR - 40);
+			analogWrite(MFL_PWM_PIN, xFL + 60);
+			
+			analogWrite(MBR_PWM_PIN, xBR - 40);
+			analogWrite(MBL_PWM_PIN, xBL + 60);
 		case 0b11110000:
 			Serial.println("00LL0");
 			
+			Set_Motors_Forward();
+			
+			analogWrite(MFR_PWM_PIN, xFR - 60);
+			analogWrite(MFL_PWM_PIN, xFL + 60);
+			
+			analogWrite(MBR_PWM_PIN, xBR - 60);
+			analogWrite(MBL_PWM_PIN, xBL + 60);
+			break;
+			
+		case 0b11100011:
 			Set_Motors_Forward();
 			
 			analogWrite(MFR_PWM_PIN, xFR - 30);
@@ -218,18 +242,15 @@ void loop()
 			analogWrite(MBR_PWM_PIN, xBR - 30);
 			analogWrite(MBL_PWM_PIN, xBL + 60);
 			break;
-			
-		case 0b11100011:
-		case 0b11100001:
 		case 0b11000001:
 			Serial.println("000L0");
 			
 			Set_Motors_Forward();
 			
-			analogWrite(MFR_PWM_PIN, xFR - 30);
+			analogWrite(MFR_PWM_PIN, xFR - 10);
 			analogWrite(MFL_PWM_PIN, xFL + 40);
 			
-			analogWrite(MBR_PWM_PIN, xBR - 30);
+			analogWrite(MBR_PWM_PIN, xBR - 10);
 			analogWrite(MBL_PWM_PIN, xBL + 40);
 			break;
 			
@@ -284,22 +305,51 @@ void loop()
 		case 0b00000000:
 			Serial.println("LLLLL");
 			
+			
 			Stop_Motors();
-			
-			game_count++;
-			
-			switch(game_count)
+			if(t_count < game_count)
 			{
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
+				Right_Turn_Until_Line();	
+			}else{
+				switch(game_count)
+				{
+					case 0:
+						game_count++;
+						break;
+					case 1:
+						game_count++;
+						break;
+					case 2:
+						game_count++;
+						break;
+					case 3:
+						game_count++;
+						break;
+					case 4:
+						Forward_Motors();
+						delay(500);
+						Stop_Motors();
+						while(1);
+						break;
+				}
+				Stop_Motors();
+				Forward_Motors();
+				
+				delay(250);
+				
+				Stop_Motors();
+				Turn_Left_Motors(20);
+				delay(500);
+				while(IRL_in != 0b11000011 && IRL_in != 0b11000111 && IRL_in != 0b10000011 && IRL_in != 0b00111111)
+				{
+					IRL_Read();
+				}
+				Serial.println("STOP AFTER WHILE");
+				Stop_Motors();
+				
 			}
-		/*
+			//while(1);
+			/*
 			Stop_Motors();
 			Forward_Motors();
 			
@@ -313,47 +363,38 @@ void loop()
 			}while(IRL_in != 11000011 || IRL_in != 11000111 || IRL_in != 11100011);
 			Serial.println("STOP AFTER WHILE");
 			Stop_Motors();
-		*/
+			*/
 			break;
 		case 0b00000111:
+			Set_Motors_Forward();
+			
+			analogWrite(MFR_PWM_PIN, xFR + 60);
+			analogWrite(MFL_PWM_PIN, xFL - 80);
+			
+			analogWrite(MBR_PWM_PIN, xBR + 60 );
+			analogWrite(MBL_PWM_PIN, xBL - 80);
+			break;
+		
 		case 0b00000011:
 		case 0b00000001:
 			Serial.println("LLL00/LLLL0");
-			Stop_Motors();
-			Forward_Motors();
-			
-			delay(250);
-			
-			Stop_Motors();
-			Turn_Left_Motors(0);
-			delay(250);
-			while(IRL_in != 11000111 || IRL_in != 11000011 || IRL_in != 11100011 || IRL_in != 10000111 || IRL_in != 11100001)
-			{
-				IRL_Read();
-			}
-			Serial.println("STOP AFTER WHILE");
-			Stop_Motors();
-			while(1);
+			Left_Turn_Until_Line();
+			//while(1);
 			break;
 		case 0b11100000:
+			Set_Motors_Forward();
+			
+			analogWrite(MFR_PWM_PIN, xFR - 80);
+			analogWrite(MFL_PWM_PIN, xFL + 60);
+			
+			analogWrite(MBR_PWM_PIN, xBR - 80);
+			analogWrite(MBL_PWM_PIN, xBL + 60);
+			break;
 		case 0b11000000:
 		case 0b10000000:
 			Serial.println("LLL00/LLLL0");
-			Stop_Motors();
-			Forward_Motors();
 			
-			delay(250);
-			
-			Stop_Motors();
-			Turn_Right_Motors(0);
-			while(IRL_in != 11000111 || IRL_in != 11000011 || IRL_in != 11100011 || IRL_in != 10000111 || IRL_in != 11100001)
-			{
-				IRL_Read();
-			}
-			
-			Serial.println("STOP AFTER WHILE");
-			Stop_Motors();
-			while(1);
+			//while(1);
 			break;
 		default:
 			Serial.println("Default Error");
@@ -479,4 +520,40 @@ void Set_Motors_Right(void)
 	
 	digitalWrite(MBL_A_PIN, LOW);
 	digitalWrite(MBL_B_PIN, HIGH);
+}
+
+void Left_Turn_Until_Line(void)
+{
+	Stop_Motors();
+	Forward_Motors();
+	
+	delay(250);
+	
+	Stop_Motors();
+	Turn_Left_Motors(20);
+	delay(250);
+	while(IRL_in != 0b11000011 && IRL_in != 0b11000111 && IRL_in != 0b10000011 && IRL_in != 0b00111111)
+	{
+		IRL_Read();
+	}
+	Serial.println("STOP AFTER WHILE");
+	Stop_Motors();
+}
+
+void Right_Turn_Until_Line(void)
+{
+	Stop_Motors();
+	Forward_Motors();
+	
+	delay(250);
+	
+	Stop_Motors();
+	Turn_Right_Motors(20);
+	while(IRL_in != 0b11100011 && IRL_in != 0b11000011 && IRL_in != 0b1111100 && IRL_in != 0b11100001)
+	{
+		IRL_Read();
+	}
+	
+	Serial.println("STOP AFTER WHILE");
+	Stop_Motors();
 }
