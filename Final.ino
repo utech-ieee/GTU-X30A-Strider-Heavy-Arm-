@@ -23,9 +23,9 @@
 //      Declaration of the IRF PINs     //
 //**************************************//
 #define IRL_PIN_s0	    22
-#define IRL_PIN_s1		23
+#define IRL_PIN_s1		23  // Numbder sign is used preprocess a command and replace the variable that is listed with the value 
 #define IRL_PIN_s2		24
-#define IRL_PIN_s3		25
+#define IRL_PIN_s3		25   // doesnt store to memory 
 #define IRL_PIN_s4		26
 #define IRL_PIN_s5		27
 #define IRL_PIN_s6		28
@@ -93,7 +93,7 @@ void setup()
 {
 	Serial.begin(9600); //Opens serial connection at 9600 baud rate
 	
-	//Initaizing Robotic Right Arm Angles
+	//Initaizing Robotic Right Arm Angles  // protractor needed 
 	rArm_Servo1.write(150);
 	rArm_Servo2.write(170);
 	rArm_Servo3.write(180);
@@ -102,13 +102,13 @@ void setup()
 	
 	//Initiaizing Robotic Left Arm Angles
 	lArm_Servo1.write(10);
-	lArm_Servo2.write(5);
+	lArm_Servo2.write(5); // the values in bracket are in  degrees
 	lArm_Servo3.write(5);
 	lArm_Servo4.write(5);
 	lArm_Servo5.write(5);
-	
+	// when time is given its the time given to reach that angle under normal cercumstances 
 	//Initiaizng Heavy Arm Claw to hold position.
-	lClaw.writeMicroseconds(1500);
+	lClaw.writeMicroseconds(1500);// tells the pin on the micro controller  to last 1500 miliseconds 
 	
 	rArm_Servo1.attach(R_ARM1_PIN); // Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin	
 	rArm_Servo2.attach(R_ARM2_PIN);	// Attaches(inputs the pin out to the Servo object) class) the servos to their respective pin
@@ -129,12 +129,13 @@ void setup()
 	//LDR_value = analogRead(LDR_PIN); //reading sensor digital values
 	initial_condition = map(analogRead(LDR_PIN), 0, 1023, 0, 40);// map LDR reading to smaller values and store as initial_condition
 	//state = initial_condition; //place initial condition in variable state for use later on
+	// 0-40 is the range mapped to 1023 
 	Serial.print("Reading taken (initial) = ");
 	Serial.println(initial_condition);
-	
+	// this is for the sensor at the bottom of the stider 
 	delay(1000);
 	
-	do
+	do  //
 	{
 		Serial.print("Reading taken = ");
 		State = map(analogRead(LDR_PIN), 0, 1023, 0, 40);
@@ -145,7 +146,7 @@ void setup()
 	
 	Set_Motors_Forward();
 
-	for(int i = 0; i < 20; i += 2)
+	for(int i = 0; i < 20; i += 2)  // 2 is the min value for the ramp function 
 	{
 		analogWrite(MFR_PWM_PIN, xFR + i);
 		analogWrite(MFL_PWM_PIN, xFL + i);
@@ -161,11 +162,11 @@ void loop()
 {
 	IRL_Read();
 	
-	switch(IRL_in)
+	switch(IRL_in) //  IT LOOKS FOR VALUES THAT MACTCHES THE THE VALUE OF irL_ IN AND EXECUTES THE CODE 
 	{
 		//Sensor conditions that indicate that the line is at the center
-		case 0b10000001:
-		case 0b11000011:
+		case 0b10000001: // ob MEANS NUMBER IN BINARY FORM 
+		case 0b11000011:// IT HIGHLIGHTS THE CASE THAT IS WRITEN , IGNORES IT AND CONTINUES DOWN THE LINE OF THE PROGRAMMING 
 		case 0b11100111:
 			Serial.println("00L00");
 			
@@ -174,9 +175,9 @@ void loop()
 			break;
 			
 		case 0b10000111:
-			Set_Motors_Forward();
+			Set_Motors_Forward(); // MAKE SURE THE ROBOT MOVES STAIGHT 
 			
-			analogWrite(MFR_PWM_PIN, xFR + 60);
+			analogWrite(MFR_PWM_PIN, xFR + 60); // RANDOM VALUES WERE USED TO TO TEST THE SPEED 
 			analogWrite(MFL_PWM_PIN, xFL - 40);
 		
 			analogWrite(MBR_PWM_PIN, xBR + 60);
@@ -418,9 +419,9 @@ void IRL_Read(void)
 	
 	for(int i = 0; i <= 7; i++)
 	{
-		IRL_in = (IRL_in << 1) + digitalRead(IRL_PIN_s7 - i);
+		IRL_in = (IRL_in << 1) + digitalRead(IRL_PIN_s7 - i);  //  (<< )  this means bit shift 
 	}
-	Serial.println(IRL_in, BIN);
+	Serial.println(IRL_in, BIN); //. BIN is binary and is a C++ function 
 }
 
 void Forward_Motors(void)
